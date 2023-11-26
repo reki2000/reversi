@@ -1,5 +1,5 @@
 # reversi
-A sample of a reversi game on terminal
+A Reversi game on a computer terminal. The player is the first, using BLACK pieces.
 
 # how to run
 ```
@@ -7,38 +7,4 @@ python main.py
 ```
 
 # screenshot
-
-```
- |1|2|3|4|5|6|7|8|
-1| | | | | | | | |
-2| | | | | | | | |
-3| | | | | | | | |
-4| | | |o|x| | | |
-5| | | |x|o| | | |
-6| | | | | | | | |
-7| | | | | | | | |
-8| | | | | | | | |
-turn: o
-input x y: 5 3
- |1|2|3|4|5|6|7|8|
-1| | | | | | | | |
-2| | | | | | | | |
-3| | | | |o| | | |
-4| | | |o|o| | | |
-5| | | |x|o| | | |
-6| | | | | | | | |
-7| | | | | | | | |
-8| | | | | | | | |
-turn: x
- |1|2|3|4|5|6|7|8|
-1| | | | | | | | |
-2| | | | | | | | |
-3| | | |x|o| | | |
-4| | | |x|o| | | |
-5| | | |x|o| | | |
-6| | | | | | | | |
-7| | | | | | | | |
-8| | | | | | | | |
-turn: o
-```
 
