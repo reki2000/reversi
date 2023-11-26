@@ -1,4 +1,4 @@
-
+import time
 
 DIRECTIONS = [
     (-1, -1),   (-1, 0),   (-1, 1),
@@ -14,25 +14,29 @@ board = [[EMPTY] * 8 for _ in range(0, 8)]
 
 def get_piece_char(c):
     if c == WHITE:
-        return "x"
+        return "\033[37m●"
     elif c == BLACK:
-        return "o"
+        return "\033[30m●\033[37m"
     else:
         return " "
 
 
-def build_board(b):
+def build_board(b, fx, fy):
     line = " |1|2|3|4|5|6|7|8|\n"
     for y in range(1, 9):
         line += f"{y}|"
         for x in range(1, 9):
-            line += f"{get_piece_char(get_piece(x,y))}|"
+            piece = get_piece_char(get_piece(x, y))
+            if x == fx and y == fy:
+                piece = f"\033[41m{piece}\033[42m"
+            line += f"{piece}|"
         line += "\n"
     return line
 
 
 def set_piece(x, y, c):
     board[y-1][x-1] = c
+    print_board(x, y)
 
 
 def get_piece(x, y):
@@ -82,12 +86,13 @@ def explore(c):
 
 
 def choose_hand(c):
-    """find puttable position which has the longest reversibles"""
+    """find puttable position which has the most reversibles"""
     max_put = (0, 0, 0)
     for hand in explore(enemy(c)):
-        for l in hand[2]:
-            if max_put[2] < l:
-                max_put = (hand[0], hand[1], l)
+        # print(f"hand: {hand}")
+        l = sum(hand[2])
+        if max_put[2] < l:
+            max_put = (hand[0], hand[1], l)
     return max_put
 
 
@@ -119,6 +124,26 @@ def count(board):
     return cnt
 
 
+def input_hand(turn):
+    while True:
+        print("input x y: ", end="")
+        x, y = map(int, input().split())
+
+        for _, d in enumerate(DIRECTIONS):
+            l = length(x, y, d, enemy(turn))
+            if l > 0:
+                return (x, y)
+        print(f"cannot put on {x} {y}")
+
+
+def print_board(x=0, y=0):
+    """flash x,y"""
+    print("\033[42m\033[37m")
+    print(build_board(board, x, y), end="")
+    print("\033[0m")
+    time.sleep(0.5)
+
+
 if __name__ == "__main__":
     set_piece(4, 4, 2)
     set_piece(5, 5, 2)
@@ -130,25 +155,7 @@ if __name__ == "__main__":
 
     while True:
         turn = enemy(turn)
-        print(build_board(board), end="")
-        print(f"turn: {get_piece_char(turn)}")
-
-        if turn == WHITE:
-            hand = choose_hand(turn)
-        else:
-            while True:
-                print("input x y: ", end="")
-                x, y = map(int, input().split())
-                ok = False
-                for _, d in enumerate(DIRECTIONS):
-                    l = length(x, y, d, enemy(turn))
-                    if l > 0:
-                        hand = (x, y, l)
-                        ok = True
-                        break
-                if ok:
-                    break
-                print(f"cannot put on {x} {y}")
+        hand = choose_hand(turn)
 
         if hand[2] == 0:
             print("pass")
@@ -161,6 +168,12 @@ if __name__ == "__main__":
 
         passed = False
         x, y = hand[0], hand[1]
+
+        if turn == BLACK:
+            x, y = input_hand(turn)
+        else:
+            print(f"put {x} {y}")
+
         set_piece(x, y, turn)
         reverse(x, y, turn)
 
